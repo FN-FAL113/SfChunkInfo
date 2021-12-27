@@ -8,5 +8,11 @@ depend: [Slimefun]
 commands:
   sfchunkinfo:
     description: Scan chunk for amount of slimefun machines
-    permission: sfchunkinfo.scan
     usage: /<command>
+  permissions:
+    sfchunkinfo.scan:
+      description: Scan the amount of Slimefun blocks on the command sender's chunk location
+      default: op
+    sfchunkinfo.scan.others:
+      description: Scan the amount of Slimefun blocks on the target player chunk location
+      default: op

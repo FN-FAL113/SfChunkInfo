@@ -17,6 +17,12 @@ public final class SfChunkInfo extends JavaPlugin implements SlimefunAddon {
         setInstance(this);
         new Metrics(this, 13713);
 
+        getLogger().info("******************************************************");
+        getLogger().info("*         SfChunkInfo - Created by FN_FAL113         *");
+        getLogger().info("*                 Addon for Slimefun                 *");
+        getLogger().info("******************************************************");
+
+
         Objects.requireNonNull(getCommand("sfchunkinfo")).setExecutor(new ScanChunk());
 
         if (getConfig().getBoolean("auto-update", true) && getDescription().getVersion().startsWith("DEV - ")) {
@@ -32,7 +38,7 @@ public final class SfChunkInfo extends JavaPlugin implements SlimefunAddon {
 
     @Override
     public String getBugTrackerURL() {
-        return null;
+        return "https://github.com/FN-FAL113/SfChunkInfo/issues";
     }
 
     private static void setInstance(SfChunkInfo ins) {
