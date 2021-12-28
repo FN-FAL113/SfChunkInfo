@@ -25,6 +25,9 @@ public final class SfChunkInfo extends JavaPlugin implements SlimefunAddon {
 
         Objects.requireNonNull(getCommand("sfchunkinfo")).setExecutor(new ScanChunk());
 
+        getConfig().options().copyDefaults();
+        saveDefaultConfig();
+
         if (getConfig().getBoolean("auto-update", true) && getDescription().getVersion().startsWith("DEV - ")) {
             new GitHubBuildsUpdater(this, getFile(), "FN-FAL113/SfChunkInfo/main").start();
         }
