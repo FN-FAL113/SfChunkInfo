@@ -6,7 +6,7 @@
 
     <groupId>me.fnfal113</groupId>
     <artifactId>SfChunkInfo</artifactId>
-    <version>Unoffical-1.1</version>
+    <version>Unoffical-1.2</version>
     <packaging>jar</packaging>
 
     <name>SfChunkInfo</name>
@@ -15,8 +15,6 @@
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.organization>fn-fal113</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <build>
@@ -90,7 +88,6 @@
     </repositories>
 
     <dependencies>
-
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
