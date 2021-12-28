@@ -14,11 +14,11 @@ Supports Slimefun addons and grief protection plugins (Towny, Grief Prevention, 
 
 
 ## Scan the player's location chunk
-![2021-12-27_14 52 28](https://user-images.githubusercontent.com/88238718/147443638-bb3d7eeb-1f3a-4fcb-9156-9f48c9e41274.png)
-![2021-12-26_10 19 41](https://user-images.githubusercontent.com/88238718/147397285-f9588279-9f7f-4d6c-ba5b-c9f9b101c77d.png)
+![2021-12-28_13 18 33](https://user-images.githubusercontent.com/88238718/147539701-645c2c99-2c1a-4844-819d-eb15739f4133.png)
+![2021-12-28_13 18 21](https://user-images.githubusercontent.com/88238718/147539671-1d76a43f-69cd-49a1-8ba9-62e9a1e0ac48.png)
 
 ## Scanning other's chunk
-![2021-12-27_14 51 07](https://user-images.githubusercontent.com/88238718/147443631-e4f96665-527e-43ff-87b2-89c9df5ac788.png)
+![2021-12-28_13 30 04](https://user-images.githubusercontent.com/88238718/147539683-a4ebc0fb-6233-4651-9708-4e8029dcc8c4.png)
 
 ## Respects protected land claim 
 ![Screenshot 2021-12-26 101529](https://user-images.githubusercontent.com/88238718/147397288-5a8070bf-6b81-4e2d-abce-8a8c3e747172.png)
