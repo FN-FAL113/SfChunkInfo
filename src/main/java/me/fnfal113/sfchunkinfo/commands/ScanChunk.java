@@ -2,7 +2,11 @@ package me.fnfal113.sfchunkinfo.commands;
 
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
+import io.github.thebusybiscuit.slimefun4.utils.WorldUtils;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -17,6 +21,7 @@ import java.util.*;
 public class ScanChunk implements TabExecutor {
 
     private final Map<String, Integer> AMOUNT = new HashMap<>();
+    private final Map<String, String> INFO = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -55,7 +60,7 @@ public class ScanChunk implements TabExecutor {
     }
 
     public void getAmount(Chunk chunk, Player player){
-        for(int y = 0; y <= 319; y++) {
+        for(int y = WorldUtils.getMinHeight(chunk.getWorld()); y <= chunk.getWorld().getMaxHeight(); y++) {
             for(int x = 0; x <= 15; x++) {
                 for(int z = 0; z <= 15; z++) {
                     Block itemStack = chunk.getBlock(x, y, z);
@@ -65,11 +70,12 @@ public class ScanChunk implements TabExecutor {
                             itemStack,
                             Interaction.PLACE_BLOCK)
                     ) {
-                        player.sendMessage("You don't have the permission to scan this chunk (Grief Protected)");
+                        player.sendMessage("You don't have the permission to scan this chunk (Grief Protected), ask for permission or override using the protection plugin command");
                         return;
                     }
 
                     if(BlockStorage.hasBlockInfo(itemStack)) {
+                        INFO.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), Objects.requireNonNull(BlockStorage.check(itemStack)).getAddon().getName());
                         AMOUNT.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(),  AMOUNT.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), 0) + 1);
                     }
                 }
@@ -83,20 +89,24 @@ public class ScanChunk implements TabExecutor {
             return;
         }
 
-        for (Map.Entry<String, Integer> entry : AMOUNT.entrySet()) {
-            player.sendMessage(entry.getKey() + ": " + ChatColor.GREEN + entry.getValue());
-        }
+        AMOUNT.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEachOrdered(e -> player.sendMessage(e.getKey() + ": " + ChatColor.GREEN + e.getValue()));
 
+        player.spigot().sendMessage(hoverInfo(INFO));
+
+        INFO.clear();
         AMOUNT.clear();
 
     }
 
     public void getAmountOthers(Chunk chunk, Player player, Player sender){
-        for(int y = 0; y <= 319; y++) {
+        for(int y = WorldUtils.getMinHeight(chunk.getWorld()); y <= chunk.getWorld().getMaxHeight(); y++) {
             for(int x = 0; x <= 15; x++) {
                 for(int z = 0; z <= 15; z++) {
                     Block itemStack = chunk.getBlock(x, y, z);
                     if(BlockStorage.hasBlockInfo(itemStack)) {
+                        INFO.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), Objects.requireNonNull(BlockStorage.check(itemStack)).getAddon().getName());
                         AMOUNT.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(),  AMOUNT.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), 0) + 1);
                     }
                 }
@@ -110,12 +120,24 @@ public class ScanChunk implements TabExecutor {
             return;
         }
 
-        for (Map.Entry<String, Integer> entry : AMOUNT.entrySet()) {
-            sender.sendMessage(entry.getKey() + ": " + ChatColor.GREEN + entry.getValue());
-        }
+        AMOUNT.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEachOrdered(e -> sender.sendMessage(e.getKey() + ": " + ChatColor.GREEN + e.getValue()));
 
+        sender.spigot().sendMessage(hoverInfo(INFO));
+
+        INFO.clear();
         AMOUNT.clear();
 
+    }
+
+    public TextComponent hoverInfo(Map<String, String> info){
+        TextComponent infoChunk = new TextComponent( "\nHover for some info" );
+        infoChunk.setColor(net.md_5.bungee.api.ChatColor.WHITE);
+        infoChunk.setItalic(true);
+        infoChunk.setHoverEvent(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text(info.toString().replace("{","").replace("}","").replace(", ", "\n").replace("=", ChatColor.WHITE + " | from: "))));
+
+        return infoChunk;
     }
 
     @Override
