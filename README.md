@@ -12,7 +12,7 @@ Supports Slimefun addons and grief protection plugins (Towny, Grief Prevention, 
 
 ```Permission node: sfchunkinfo.scan.others```
 
-## Download official build
+## Download official build (with auto updates)
 [![Build Status](https://thebusybiscuit.github.io/builds/FN-FAL113/SfChunkInfo/main/badge.svg)](https://thebusybiscuit.github.io/builds/FN-FAL113/SfChunkInfo/main)
 
 
