@@ -22,6 +22,7 @@ public class ScanChunk implements TabExecutor {
 
     private final Map<String, Integer> AMOUNT = new HashMap<>();
     private final Map<String, String> INFO = new HashMap<>();
+    private final Map<String, Double> TIMINGS = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -60,21 +61,23 @@ public class ScanChunk implements TabExecutor {
     }
 
     public void getAmount(Chunk chunk, Player player){
+        if (!Slimefun.getProtectionManager().hasPermission(
+                Bukkit.getOfflinePlayer(player.getUniqueId()),
+                player.getLocation(),
+                Interaction.PLACE_BLOCK)
+        ) {
+            player.sendMessage("You don't have the permission to scan this chunk (Grief Protected), ask for permission or override using the protection plugin command");
+            return;
+        }
+
         for(int y = WorldUtils.getMinHeight(chunk.getWorld()); y <= chunk.getWorld().getMaxHeight(); y++) {
             for(int x = 0; x <= 15; x++) {
                 for(int z = 0; z <= 15; z++) {
                     Block itemStack = chunk.getBlock(x, y, z);
 
-                    if (!Slimefun.getProtectionManager().hasPermission(
-                            Bukkit.getOfflinePlayer(player.getUniqueId()),
-                            itemStack,
-                            Interaction.PLACE_BLOCK)
-                    ) {
-                        player.sendMessage("You don't have the permission to scan this chunk (Grief Protected), ask for permission or override using the protection plugin command");
-                        return;
-                    }
-
-                    if(BlockStorage.hasBlockInfo(itemStack)) {
+                    if(BlockStorage.check(itemStack) != null) {
+                        TIMINGS.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), TIMINGS.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), (double) 0)
+                                + Double.parseDouble(Slimefun.getProfiler().getTime(itemStack).substring(0, Slimefun.getProfiler().getTime(itemStack).length() - 2)));
                         INFO.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), Objects.requireNonNull(BlockStorage.check(itemStack)).getAddon().getName());
                         AMOUNT.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(),  AMOUNT.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), 0) + 1);
                     }
@@ -94,9 +97,11 @@ public class ScanChunk implements TabExecutor {
                 .forEachOrdered(e -> player.sendMessage(e.getKey() + ": " + ChatColor.GREEN + e.getValue()));
 
         player.spigot().sendMessage(hoverInfo(INFO));
+        player.spigot().sendMessage(hoverInfoTimings(TIMINGS));
 
-        INFO.clear();
         AMOUNT.clear();
+        INFO.clear();
+        TIMINGS.clear();
 
     }
 
@@ -105,7 +110,10 @@ public class ScanChunk implements TabExecutor {
             for(int x = 0; x <= 15; x++) {
                 for(int z = 0; z <= 15; z++) {
                     Block itemStack = chunk.getBlock(x, y, z);
-                    if(BlockStorage.hasBlockInfo(itemStack)) {
+
+                    if(BlockStorage.check(itemStack) != null) {
+                        TIMINGS.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), TIMINGS.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), (double) 0)
+                                + Double.parseDouble(Slimefun.getProfiler().getTime(itemStack).substring(0, Slimefun.getProfiler().getTime(itemStack).length() - 2)));
                         INFO.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), Objects.requireNonNull(BlockStorage.check(itemStack)).getAddon().getName());
                         AMOUNT.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(),  AMOUNT.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), 0) + 1);
                     }
@@ -125,17 +133,28 @@ public class ScanChunk implements TabExecutor {
                 .forEachOrdered(e -> sender.sendMessage(e.getKey() + ": " + ChatColor.GREEN + e.getValue()));
 
         sender.spigot().sendMessage(hoverInfo(INFO));
+        sender.spigot().sendMessage(hoverInfoTimings(TIMINGS));
 
-        INFO.clear();
         AMOUNT.clear();
+        INFO.clear();
+        TIMINGS.clear();
 
     }
 
     public TextComponent hoverInfo(Map<String, String> info){
-        TextComponent infoChunk = new TextComponent( "\nHover for some info" );
+        TextComponent infoAddon = new TextComponent( "\nHover for some info" );
+        infoAddon.setColor(net.md_5.bungee.api.ChatColor.WHITE);
+        infoAddon.setItalic(true);
+        infoAddon.setHoverEvent(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text(info.toString().replace("{","").replace("}","").replace(", ", "\n").replace("=", ChatColor.WHITE + " | from: "))));
+
+        return infoAddon;
+    }
+
+    public TextComponent hoverInfoTimings(Map<String, Double> timings){
+        TextComponent infoChunk = new TextComponent( "Hover for block total timings" );
         infoChunk.setColor(net.md_5.bungee.api.ChatColor.WHITE);
         infoChunk.setItalic(true);
-        infoChunk.setHoverEvent(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text(info.toString().replace("{","").replace("}","").replace(", ", "\n").replace("=", ChatColor.WHITE + " | from: "))));
+        infoChunk.setHoverEvent(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GOLD + "Total Timings" + "\n\n" + timings.toString().replace("{","").replace("}","").replace(", ", " ms\n").replace("=", ChatColor.WHITE + ": ").concat(ChatColor.WHITE + " ms"))));
 
         return infoChunk;
     }
