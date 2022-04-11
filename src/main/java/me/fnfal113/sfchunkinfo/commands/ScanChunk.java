@@ -43,14 +43,12 @@ public class ScanChunk implements TabExecutor {
                     Player target = Bukkit.getPlayer(args[0]);
 
                     if(target == null){
-                        player.sendMessage("Player cannot be null or offline");
+                        player.sendMessage("Player should not be null nor offline");
                         return true;
                     }
 
                     Chunk chunk = target.getLocation().getChunk();
-
                     getAmountOthers(chunk, target, player);
-
                 } else {
                     player.sendMessage("You don't have permission to use this command (perm mode: sfchunkinfo.scan.others)");
                 }
@@ -61,37 +59,55 @@ public class ScanChunk implements TabExecutor {
     }
 
     public void getAmount(Chunk chunk, Player player){
-        if (!Slimefun.getProtectionManager().hasPermission(
-                Bukkit.getOfflinePlayer(player.getUniqueId()),
-                player.getLocation(),
-                Interaction.PLACE_BLOCK)
-        ) {
+        if (!Slimefun.getProtectionManager().hasPermission(Bukkit.getOfflinePlayer(player.getUniqueId()), player.getLocation(),
+                Interaction.PLACE_BLOCK)) {
             player.sendMessage("You don't have the permission to scan this chunk (Grief Protected), ask for permission or override using the protection plugin command");
             return;
         }
 
-        for(int y = WorldUtils.getMinHeight(chunk.getWorld()); y <= chunk.getWorld().getMaxHeight(); y++) {
+        scanChunk(chunk);
+
+        player.sendMessage(ChatColor.GOLD + "# of Slimefun blocks on this chunk:", "");
+
+        if (AMOUNT.isEmpty()) {
+            player.sendMessage(ChatColor.YELLOW + "No Slimefun blocks on this chunk");
+            return;
+        }
+
+        sendResults(player);
+    }
+
+    public void getAmountOthers(Chunk chunk, Player player, Player sender){
+        scanChunk(chunk);
+
+        sender.sendMessage(ChatColor.GOLD + "# of Slimefun blocks on " + ChatColor.WHITE + player.getName() + ChatColor.GOLD + " chunk:", "");
+
+        if (AMOUNT.isEmpty()) {
+            sender.sendMessage(ChatColor.YELLOW + "No Slimefun blocks on " + ChatColor.WHITE + player.getName() + ChatColor.GOLD + " chunk");
+            return;
+        }
+
+        sendResults(sender);
+    }
+
+    public void scanChunk(Chunk chunk){
+        for(int y = WorldUtils.getMinHeight(chunk.getWorld()); y <= chunk.getWorld().getMaxHeight() - 1; y++) {
             for(int x = 0; x <= 15; x++) {
                 for(int z = 0; z <= 15; z++) {
-                    Block itemStack = chunk.getBlock(x, y, z);
+                    Block sfBlock = chunk.getBlock(x, y, z);
 
-                    if(BlockStorage.check(itemStack) != null) {
-                        TIMINGS.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), TIMINGS.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), (double) 0)
-                                + Double.parseDouble(Slimefun.getProfiler().getTime(itemStack).substring(0, Slimefun.getProfiler().getTime(itemStack).length() - 2)));
-                        INFO.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), Objects.requireNonNull(BlockStorage.check(itemStack)).getAddon().getName());
-                        AMOUNT.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(),  AMOUNT.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), 0) + 1);
+                    if(BlockStorage.check(sfBlock) != null) {
+                        TIMINGS.put(Objects.requireNonNull(BlockStorage.check(sfBlock)).getItemName(), TIMINGS.getOrDefault(Objects.requireNonNull(BlockStorage.check(sfBlock)).getItemName(), (double) 0)
+                                + Double.parseDouble(Slimefun.getProfiler().getTime(sfBlock).substring(0, Slimefun.getProfiler().getTime(sfBlock).length() - 2)));
+                        INFO.put(Objects.requireNonNull(BlockStorage.check(sfBlock)).getItemName(), Objects.requireNonNull(BlockStorage.check(sfBlock)).getAddon().getName());
+                        AMOUNT.put(Objects.requireNonNull(BlockStorage.check(sfBlock)).getItemName(),  AMOUNT.getOrDefault(Objects.requireNonNull(BlockStorage.check(sfBlock)).getItemName(), 0) + 1);
                     }
                 }
             }
         }
+    }
 
-        player.sendMessage(ChatColor.GOLD + "# of Slimefun items on this chunk:", "");
-
-        if (AMOUNT.isEmpty()) {
-            player.sendMessage(ChatColor.YELLOW + "No Slimefun items on this chunk");
-            return;
-        }
-
+    public void sendResults(Player player){
         AMOUNT.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .forEachOrdered(e -> player.sendMessage(e.getKey() + ": " + ChatColor.GREEN + e.getValue()));
@@ -102,48 +118,11 @@ public class ScanChunk implements TabExecutor {
         AMOUNT.clear();
         INFO.clear();
         TIMINGS.clear();
-
-    }
-
-    public void getAmountOthers(Chunk chunk, Player player, Player sender){
-        for(int y = WorldUtils.getMinHeight(chunk.getWorld()); y <= chunk.getWorld().getMaxHeight(); y++) {
-            for(int x = 0; x <= 15; x++) {
-                for(int z = 0; z <= 15; z++) {
-                    Block itemStack = chunk.getBlock(x, y, z);
-
-                    if(BlockStorage.check(itemStack) != null) {
-                        TIMINGS.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), TIMINGS.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), (double) 0)
-                                + Double.parseDouble(Slimefun.getProfiler().getTime(itemStack).substring(0, Slimefun.getProfiler().getTime(itemStack).length() - 2)));
-                        INFO.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), Objects.requireNonNull(BlockStorage.check(itemStack)).getAddon().getName());
-                        AMOUNT.put(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(),  AMOUNT.getOrDefault(Objects.requireNonNull(BlockStorage.check(itemStack)).getItemName(), 0) + 1);
-                    }
-                }
-            }
-        }
-
-        sender.sendMessage(ChatColor.GOLD + "# of Slimefun items on " + ChatColor.WHITE + player.getName() + ChatColor.GOLD + " chunk:", "");
-
-        if (AMOUNT.isEmpty()) {
-            sender.sendMessage(ChatColor.YELLOW + "No Slimefun items on " + ChatColor.WHITE + player.getName() + ChatColor.GOLD + " chunk");
-            return;
-        }
-
-        AMOUNT.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .forEachOrdered(e -> sender.sendMessage(e.getKey() + ": " + ChatColor.GREEN + e.getValue()));
-
-        sender.spigot().sendMessage(hoverInfo(INFO));
-        sender.spigot().sendMessage(hoverInfoTimings(TIMINGS));
-
-        AMOUNT.clear();
-        INFO.clear();
-        TIMINGS.clear();
-
     }
 
     public TextComponent hoverInfo(Map<String, String> info){
-        TextComponent infoAddon = new TextComponent( "\nHover for some info" );
-        infoAddon.setColor(net.md_5.bungee.api.ChatColor.WHITE);
+        TextComponent infoAddon = new TextComponent("\nHover for some info");
+        infoAddon.setColor(net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
         infoAddon.setItalic(true);
         infoAddon.setHoverEvent(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text(info.toString().replace("{","").replace("}","").replace(", ", "\n").replace("=", ChatColor.WHITE + " | from: "))));
 
@@ -151,8 +130,8 @@ public class ScanChunk implements TabExecutor {
     }
 
     public TextComponent hoverInfoTimings(Map<String, Double> timings){
-        TextComponent infoChunk = new TextComponent( "Hover for block total timings" );
-        infoChunk.setColor(net.md_5.bungee.api.ChatColor.WHITE);
+        TextComponent infoChunk = new TextComponent("Hover for block total timings");
+        infoChunk.setColor(net.md_5.bungee.api.ChatColor.LIGHT_PURPLE);
         infoChunk.setItalic(true);
         infoChunk.setHoverEvent(new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GOLD + "Total Timings" + "\n\n" + timings.toString().replace("{","").replace("}","").replace(", ", " ms\n").replace("=", ChatColor.WHITE + ": ").concat(ChatColor.WHITE + " ms"))));
 
@@ -161,7 +140,6 @@ public class ScanChunk implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
         if(args.length == 1){
             List<String> playerNames = new ArrayList<>();
             Player[] players = new Player[Bukkit.getServer().getOnlinePlayers().size()];
@@ -172,7 +150,6 @@ public class ScanChunk implements TabExecutor {
 
             return playerNames;
         }
-
 
         return null;
     }
