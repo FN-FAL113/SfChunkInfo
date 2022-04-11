@@ -20,6 +20,7 @@ public final class SfChunkInfo extends JavaPlugin implements SlimefunAddon {
         getLogger().info("******************************************************");
         getLogger().info("*         SfChunkInfo - Created by FN_FAL113         *");
         getLogger().info("*                 Addon for Slimefun                 *");
+        getLogger().info("*         Scan your chunk for # of sf blocks         *");
         getLogger().info("******************************************************");
 
 
