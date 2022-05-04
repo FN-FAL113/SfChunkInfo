@@ -1,7 +1,9 @@
- SfChunkInfo
+# SfChunkInfo
 A simple handy scanner for Slimefun blocks per chunk
 
 Supports Slimefun addons and grief protection plugins (Towny, Grief Prevention, etc)
+
+Works on 1.14+ minecraft spigot/paper/forks version
 
 ## Usage
 ```/sfchunkinfo``` - the command to scan your chunks for slimefun blocks
