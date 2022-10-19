@@ -1,5 +1,5 @@
 # SfChunkInfo
-A simple handy scanner for Slimefun blocks per chunk
+A simple handy scanner for Slimefun blocks per chunk, it also measures the power usage of the blocks for decision making
 
 Supports Slimefun addons and grief protection plugins (Towny, Grief Prevention, etc)
 
