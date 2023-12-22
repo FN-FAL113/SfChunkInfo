@@ -15,7 +15,7 @@ Works on 1.14+ minecraft spigot/paper/forks version
 ```Permission node: sfchunkinfo.scan.others```
 
 ## Download official build (with auto updates)
-[![Build Status](https://thebusybiscuit.github.io/builds/FN-FAL113/SfChunkInfo/main/badge.svg)](https://thebusybiscuit.github.io/builds/FN-FAL113/SfChunkInfo/main)
+### [Download Official Jar](https://blob.build/project/SfChunkInfo)
 
 
 ## Scanning a location chunk
@@ -49,3 +49,10 @@ Works on 1.14+ minecraft spigot/paper/forks version
     <img src="https://discordapp.com/api/guilds/809178621424041997/widget.png?style=banner3" alt="Discord Invite"/>
   </a>
 </p>
+
+## 💖 Support the Project/Dev
+I develop stuff for free with dedication and hard work. Sharing this project with fellow minecraft gamers/server owners or giving it a star is a huge sign of appreciation!</br>
+a donation button (currently using parent's paypal due to my pending account requirements).<br/>
+<a href="https://www.paypal.com/paypalme/ameliaOrbeta" target=_blank>
+  <img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" alt="Donate with PayPal" width="40%" />
+</a>
