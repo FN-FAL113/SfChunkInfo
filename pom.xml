@@ -6,7 +6,7 @@
 
     <groupId>me.fnfal113</groupId>
     <artifactId>SfChunkInfo</artifactId>
-    <version>Unoffical-1.6.0</version>
+    <version>Unoffical-1.6.1</version>
     <packaging>jar</packaging>
 
     <name>SfChunkInfo</name>
@@ -120,15 +120,15 @@
         <dependency>
             <groupId>com.github.baked-libs.dough</groupId>
             <artifactId>dough-updater</artifactId>
-            <version>4b28bd408e</version>
-             <scope>compile</scope>
+            <version>c4231a4d1a</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.baked-libs.dough</groupId>
             <artifactId>dough-common</artifactId>
-            <version>4b28bd408e</version>
-             <scope>compile</scope>
+            <version>c4231a4d1a</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
