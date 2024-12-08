@@ -179,7 +179,7 @@ public class ScanChunk implements TabExecutor {
     public TextComponent hoverInfoTimings(Map<String, Double> timings){
         Map<String, Double> sortedTimings = new LinkedHashMap<>();
         if(!timings.isEmpty()) {
-            timings.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue(Double::compare).reversed()).forEach(e -> sortedTimings.put(e.getKey(), e.getValue()));
+            timings.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue(Double::compare)).forEach(e -> sortedTimings.put(e.getKey(), e.getValue()));
         }
 
         TextComponent infoChunk = new TextComponent("Hover for block total timings");
@@ -199,7 +199,7 @@ public class ScanChunk implements TabExecutor {
     public TextComponent hoverInfoPower(Map<String, Integer> power){
         Map<String, Integer> sortedPower = new LinkedHashMap<>();
         if(!power.isEmpty()){
-            power.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue(Integer::compare).reversed()).forEach(e -> sortedPower.put(e.getKey(), e.getValue()));
+            power.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue(Integer::compare)).forEach(e -> sortedPower.put(e.getKey(), e.getValue()));
         }
 
         TextComponent infoPower = new TextComponent("Hover for total power consumption");
